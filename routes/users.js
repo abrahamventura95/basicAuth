@@ -14,7 +14,8 @@ export const userRoute = Router();
  * @swagger
  * /api/v1:
  *   get:
- *     summary: Returns the logged in user's information.
+ *     security: 
+ *      - Bearer: []
  *     responses:
  *       200:
  *         description: Login successful
