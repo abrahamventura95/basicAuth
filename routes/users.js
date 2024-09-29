@@ -14,35 +14,35 @@ export const userRoute = Router();
  * @swagger
  * /api/v1:
  *   get:
- *     summary: Retorna la informacion del usuario loggeado.
+ *     summary: Returns the logged in user's information.
  *     responses:
  *       200:
- *         description: Se logro iniciar sesion
+ *         description: Login successful
  *         content:
  *          'application/json':
  *            schema:
  *              type: object
- *              description: Login exitoso
+ *              description: Login successful
  *              properties:
  *                user:
  *                  type: object
- *                  description: Usuario loggeado
+ *                  description: User logged
  *                  properties:
  *                    first_name:
  *                      type: string
- *                      description: Nombres del usuario
+ *                      description: User first name
  *                      example: Abraham
  *                    last_name:
  *                      type: string
- *                      description: Apellidos del usuario
+ *                      description: User last name
  *                      example: Ventura
  *                    email:
  *                      type: string
- *                      description: Email del usuario
+ *                      description: User email
  *                      example: amsventura.95@gmail.com
  *
  *       500:
- *         description: Error del servidor
+ *         description: Internal server error
  *         content:
  *          'application/json':
  *            schema:
@@ -51,8 +51,8 @@ export const userRoute = Router();
  *              properties:
  *                error:
  *                  type: string
- *                  description: Mensaje de error
- *                  example: Oops! algo salio mal, por favor volver a intentar despues
+ *                  description: Error message
+ *                  example: Internal Server Error
  *
  */
 userRoute.get("/", verifyToken, async (req, res) => {
@@ -64,7 +64,7 @@ userRoute.get("/", verifyToken, async (req, res) => {
     res.status(200).send({ user });
   } catch (error) {
     res.status(500).send({
-      error: "Oops! algo salio mal, por favor volver a intentar despues",
+      error: "Internal Server Error",
     });
   }
 });
@@ -73,7 +73,7 @@ userRoute.get("/", verifyToken, async (req, res) => {
  * @swagger
  * /api/v1/register:
  *   post:
- *     summary: Registro de usuario.
+ *     summary: User register.
  *     requestBody:
  *       required: true
  *       content:
@@ -83,60 +83,60 @@ userRoute.get("/", verifyToken, async (req, res) => {
  *             properties:
  *               first_name:
  *                 type: string
- *                 description: Nombres del usuario.
+ *                 description: User first name
  *                 example: Abraham
  *               last_name:
  *                 type: string
- *                 description: Apellidos del usuario.
+ *                 description: User last name
  *                 example: Ventura
  *               email:
  *                 type: string
- *                 description: Correo electronico.
+ *                 description: User email
  *                 example: amsventura.95@gmail.com
  *               password:
  *                 type: string
- *                 description: Contraseña de la cuenta.
+ *                 description: Account password.
  *                 example: pasS!123
  *
  *     responses:
  *       201:
- *         description: Registro exitoso!
+ *         description: Successful register
  *         content:
  *          'application/json':
  *            schema:
  *              type: object
- *              description: Creacion exitosa
+ *              description: Successful register
  *              properties:
  *                message:
  *                  type: string
- *                  description: Mensaje de exito
- *                  example: Registro exitoso
+ *                  description: Successful message
+ *                  example: Successful register
  *                auth:
  *                  type: object
  *                  properties:
  *                    token:
  *                      type: string
  *                      description: Token
- *                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+ *                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC
  *                    type:
  *                      type: string
  *                      description: Bearer
  *                      example: Bearer
  *
  *       400:
- *         description: Error en la data
+ *         description: Data error
  *         content:
  *          'application/json':
  *            schema:
  *              type: array
- *              description: Mensajes de error
+ *              description: Error message
  *              items:
  *                type: string
- *                description: Errores
- *                example: Su correo ya esta registrado
+ *                description: Errors
+ *                example: email already registered
  *
  *       500:
- *         description: Error en creacion
+ *         description: Creation error
  *         content:
  *          'application/json':
  *            schema:
@@ -145,8 +145,8 @@ userRoute.get("/", verifyToken, async (req, res) => {
  *              properties:
  *                error:
  *                  type: string
- *                  description: Mensaje de error
- *                  example: No se puede verificar los datos actualmente, por favor intente mas tarde
+ *                  description: Error message
+ *                  example: Unable to verify data at this time, please try again later.
  *
  */
 userRoute.post("/register", async (req, res) => {
@@ -158,7 +158,7 @@ userRoute.post("/register", async (req, res) => {
     if (isInBlackList) {
       return res.status(400).send({
         message:
-          "El usuario se encuentra en lista negra de PLD, por lo que no se puede crear la cuenta",
+          "The user is blacklisted by PLD, and therefore the account cannot be created.",
       });
     }
     const newUser = new User({
@@ -172,7 +172,7 @@ userRoute.post("/register", async (req, res) => {
       throw e;
     });
     res.status(201).send({
-      message: "Registro exitoso",
+      message: "Successful register",
       auth: tokenResponse(getToken(req.body.email)),
     });
   } catch (error) {
@@ -181,11 +181,11 @@ userRoute.post("/register", async (req, res) => {
         errors: formatValidationErrors(error.errors),
       });
     } else if (error.code === 11000) {
-      res.status(400).send({ errors: ["Su correo ya esta registrado"] });
+      res.status(400).send({ errors: ["email already registered"] });
     } else {
       res.status(500).send({
         error:
-          "No se puede verificar los datos actualmente, por favor intente mas tarde",
+          "Unable to verify data at this time, please try again later.",
       });
     }
   }
@@ -195,7 +195,7 @@ userRoute.post("/register", async (req, res) => {
  * @swagger
  * /api/v1/login:
  *   post:
- *     summary: Inicio de sesion.
+ *     summary: Login.
  *     requestBody:
  *       required: true
  *       content:
@@ -205,40 +205,40 @@ userRoute.post("/register", async (req, res) => {
  *             properties:
  *               email:
  *                 type: string
- *                 description: Correo electronico.
+ *                 description: Account email
  *                 example: amsventura.95@gmail.com
  *               password:
  *                 type: string
- *                 description: Contraseña de la cuenta.
+ *                 description: Account password
  *                 example: pasS!123
  *
  *     responses:
  *       200:
- *         description: Se logro iniciar sesion
+ *         description: Successful login
  *         content:
  *          'application/json':
  *            schema:
  *              type: object
- *              description: Login exitoso
+ *              description: Successful login
  *              properties:
  *                message:
  *                  type: string
- *                  description: Mensaje de exito
- *                  example: Inicio de sesion exitoso
+ *                  description: Successful message
+ *                  example: Successful login
  *                auth:
  *                  type: object
  *                  properties:
  *                    token:
  *                      type: string
  *                      description: Token
- *                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+ *                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC
  *                    type:
  *                      type: string
  *                      description: Bearer
  *                      example: Bearer
  *
  *       401:
- *         description: No autenticado
+ *         description: Not authenticated
  *         content:
  *          'application/json':
  *            schema:
@@ -247,11 +247,11 @@ userRoute.post("/register", async (req, res) => {
  *              properties:
  *                error:
  *                  type: string
- *                  description: Mensaje de error
- *                  example: Correo o contraseña equivocados
+ *                  description: Error message
+ *                  example: Wrong email or password
  *
  *       500:
- *         description: Error del servidor
+ *         description: Server error
  *         content:
  *          'application/json':
  *            schema:
@@ -260,8 +260,8 @@ userRoute.post("/register", async (req, res) => {
  *              properties:
  *                error:
  *                  type: string
- *                  description: Mensaje de error
- *                  example: Oops! algo salio mal, por favor volver a intentar despues
+ *                  description: Error message
+ *                  example: Internal Server Error
  *
  */
 userRoute.post("/login", async (req, res) => {
@@ -270,28 +270,28 @@ userRoute.post("/login", async (req, res) => {
     // Check if the email exists
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(401).send({ error: "Correo o contraseña equivocados" });
+      return res.status(401).send({ error: "Wrong email or password" });
     }
     user.comparePassword(password, (err, isMatch) => {
       if (err) {
         return res.status(500).json({
-          error: "Oops! algo salio mal, por favor volver a intentar despues",
+          error: "Internal Server Error",
         });
       }
       if (isMatch) {
         return res.status(200).send({
-          message: "Inicio de sesion exitoso",
+          message: "Successful login",
           auth: tokenResponse(getToken(req.body.email)),
         });
       } else {
         return res
           .status(401)
-          .send({ error: "Correo o contraseña equivocados" });
+          .send({ error: "Wrong email or password" });
       }
     });
   } catch (error) {
     return res.status(500).json({
-      error: "Oops! algo salio mal, por favor volver a intentar despues",
+      error: "Internal Server Error",
     });
   }
 });
