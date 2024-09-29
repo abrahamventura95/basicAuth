@@ -2,8 +2,8 @@
 
 ### Pre-requisitos
 
-Tener instalado [Git](https://git-scm.com/downloads)
-Tener instalado [Docker](https://www.docker.com/get-started/)
+- Tener instalado [Git](https://git-scm.com/downloads)
+- Tener instalado [Docker](https://www.docker.com/get-started/)
 
 ##### Para iniciar el proyecto es necesario:
 
