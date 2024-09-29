@@ -1,15 +1,30 @@
 version: '3'
 services:
   api:
-    image: external-pld-app
+    image: internal-pld-app
     build: .
     networks:
       - backend
     ports:
-      - "3000:3000"
+      - "${PORT}:${PORT}"
     volumes:
       - ./:/usr/src/app
+    links:
+      - mongo
+  mongo:
+    image: mongo
+    restart: always 
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    networks:
+      - backend
+    volumes:
+      - mongoDB:/data/db
 
 networks:
   backend:
     driver: bridge
+
+volumes: 
+  mongoDB:
+    driver: local
