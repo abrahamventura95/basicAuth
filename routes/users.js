@@ -155,6 +155,16 @@ userRoute.post("/register", async (req, res) => {
     const first_name = req.body.first_name;
     const last_name = req.body.last_name;
     const email = req.body.email;
+    const newUser = new User({
+      first_name,
+      last_name,
+      email,
+      password: req.body.password,
+    });
+    const maybeError = newUser.validateSync()
+    if(maybeError){
+      throw maybeError
+    }
     const isInBlackList = await fetchApi({ first_name, last_name, email });
     if (isInBlackList) {
       return res.status(400).send({
@@ -162,29 +172,21 @@ userRoute.post("/register", async (req, res) => {
           "The user is blacklisted by PLD, and therefore the account cannot be created.",
       });
     }
-    const newUser = new User({
-      first_name,
-      last_name,
-      email,
-      password: req.body.password,
-    });
 
-    await newUser.save().catch((e) => {
-      throw e;
-    });
-    res.status(201).send({
+    await newUser.save();
+    return res.status(201).send({
       message: "Successful register",
       auth: tokenResponse(getToken(req.body.email)),
     });
   } catch (error) {
     if (error.name === "ValidationError") {
-      res.status(400).send({
+      return res.status(400).send({
         errors: formatValidationErrors(error.errors),
       });
     } else if (error.code === 11000) {
-      res.status(400).send({ errors: ["email already registered"] });
+      return res.status(400).send({ errors: ["email already registered"] });
     } else {
-      res.status(500).send({
+      return res.status(500).send({
         error:
           "Unable to verify data at this time, please try again later.",
       });
