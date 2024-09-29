@@ -4,7 +4,7 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Internal Servel API",
+      title: "Internal Server API",
       version: "1.0",
       description: "Basic user manage",
     },
