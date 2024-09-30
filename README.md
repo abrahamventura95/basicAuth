@@ -24,6 +24,11 @@ npm test
 
 Ruta basada en el archivo .env por defecto podra acceder desde 127.0.0.1:3000
 
+Las demas rutas son: 
+- /api/v1 
+- /api/v1/register 
+- /api/v1/login
+
 ### Postman
 
 - Seleccionar Import en la sidebar
